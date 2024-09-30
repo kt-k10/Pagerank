@@ -9,9 +9,7 @@ import math
 import torch
 import gzip
 import csv
-
 import logging
-
 
 class WebGraph():
 
@@ -96,6 +94,34 @@ class WebGraph():
         If query contains a string,
         then each url satisfying the query has the vector entry set to 1;
         all other entries are set to 0.
+
+        Task 2 part 1:
+
+        $ python3 pagerank.py --data=data/lawfareblog.csv.gz --filter_ratio=0.2 --personalization_vector_query='corona'
+        INFO:root:rank=0 pagerank=1.1011e+00 url=www.lawfareblog.com/britains-coronavirus-response
+        INFO:root:rank=1 pagerank=1.1011e+00 url=www.lawfareblog.com/prosecuting-purposeful-coronavirus-exposure-terrorism
+        INFO:root:rank=2 pagerank=1.0581e+00 url=www.lawfareblog.com/brexit-not-immune-coronavirus
+        INFO:root:rank=3 pagerank=1.0581e+00 url=www.lawfareblog.com/rational-security-my-corona-edition
+        INFO:root:rank=4 pagerank=1.0578e+00 url=www.lawfareblog.com/lawfare-podcast-united-nations-and-coronavirus-crisis
+        INFO:root:rank=5 pagerank=1.0283e+00 url=www.lawfareblog.com/china-responds-coronavirus-iron-grip-information-flow
+        INFO:root:rank=6 pagerank=1.0270e+00 url=www.lawfareblog.com/paper-hearing-experts-debate-digital-contact-tracing-and-coronavirus-privacy-concerns
+        INFO:root:rank=7 pagerank=1.0149e+00 url=www.lawfareblog.com/israeli-emergency-regulations-location-tracking-coronavirus-carriers
+        INFO:root:rank=8 pagerank=1.0127e+00 url=www.lawfareblog.com/congressional-homeland-security-committees-seek-ways-support-state-federal-responses-coronavirus
+        INFO:root:rank=9 pagerank=1.0071e+00 url=www.lawfareblog.com/trump-right-britain-handling-coronavirus-well
+
+        Task 2 part 2:
+
+        $ python3 pagerank.py --data=data/lawfareblog.csv.gz --filter_ratio=0.2 --personalization_vector_query='corona' --search_query='-corona'
+        INFO:root:rank=0 pagerank=3.0674e-01 url=www.lawfareblog.com/chinatalk-how-party-takes-its-propaganda-global
+        INFO:root:rank=1 pagerank=1.8695e-01 url=www.lawfareblog.com/trump-cant-reopen-country-over-state-objections
+        INFO:root:rank=2 pagerank=1.7983e-01 url=www.lawfareblog.com/fault-lines-foreign-policy-quarantined
+        INFO:root:rank=3 pagerank=1.2901e-01 url=www.lawfareblog.com/chinatalk-dispatches-shanghai-beijing-and-hong-kong
+        INFO:root:rank=4 pagerank=1.1708e-01 url=www.lawfareblog.com/federal-courts-begin-adapt-covid-19
+        INFO:root:rank=5 pagerank=1.1369e-01 url=www.lawfareblog.com/twitter-using-health-emergency-settle-political-scores
+        INFO:root:rank=6 pagerank=1.1369e-01 url=www.lawfareblog.com/lawfare-podcast-stephen-holmes-liberalism-21st-century
+        INFO:root:rank=7 pagerank=1.1369e-01 url=www.lawfareblog.com/fault-lines-combating-extremism-farah-pandith
+        INFO:root:rank=8 pagerank=1.1047e-01 url=www.lawfareblog.com/limits-world-health-organization
+        INFO:root:rank=9 pagerank=1.0595e-01 url=www.lawfareblog.com/senators-urge-cyber-leaders-prevent-attacks-healthcare-sector
         '''
         n = self.P.shape[0]
 
@@ -104,7 +130,11 @@ class WebGraph():
 
         else:
             v = torch.zeros(n)
-            # FIXME: implement Task 2
+            for index in range(n):
+                url = self._index_to_url(index)  # Get the URL for the current index
+                if url_satisfies_query(url, query):  # Check if the URL satisfies the query
+                    v[index] = 1  # Set the corresponding index to one
+
         
         v_sum = torch.sum(v)
         assert(v_sum>0)
@@ -119,6 +149,173 @@ class WebGraph():
 
         The self.P variable stores the $P$ matrix.
         You will have to compute the $a$ vector and implement Equation 5.1 from "Deeper Inside Pagerank."
+
+        Task 1 part 1 output:
+
+        $ python3 pagerank.py --data=data/small.csv.gz --verbose
+        DEBUG:root:i=0 residual=1.966086983680725
+        DEBUG:root:i=1 residual=0.13075874745845795
+        DEBUG:root:i=2 residual=0.015665274113416672
+        DEBUG:root:i=3 residual=0.0025806762278079987
+        DEBUG:root:i=4 residual=0.0005644535413011909
+        DEBUG:root:i=5 residual=9.554154530633241e-05
+        DEBUG:root:i=6 residual=2.022706212301273e-05
+        DEBUG:root:i=7 residual=3.592632538129692e-06
+        DEBUG:root:i=8 residual=8.018984658519912e-07
+        INFO:root:rank=0 pagerank=1.4128e+00 url=4
+        INFO:root:rank=1 pagerank=1.2504e+00 url=6
+        INFO:root:rank=2 pagerank=1.1754e+00 url=5
+        INFO:root:rank=3 pagerank=1.1085e+00 url=2
+        INFO:root:rank=4 pagerank=1.0082e+00 url=3
+        INFO:root:rank=5 pagerank=9.6462e-01 url=1
+
+        Task 1 part 2 output:
+        
+        $ python3 pagerank.py --data=data/lawfareblog.csv.gz --search_query='corona'
+        DEBUG:root:i=0 residual=1.966086983680725
+        DEBUG:root:i=1 residual=0.13075874745845795
+        DEBUG:root:i=2 residual=0.015665274113416672
+        DEBUG:root:i=3 residual=0.0025806762278079987
+        DEBUG:root:i=4 residual=0.0005644535413011909
+        DEBUG:root:i=5 residual=9.554154530633241e-05
+        DEBUG:root:i=6 residual=2.022706212301273e-05
+        DEBUG:root:i=7 residual=3.592632538129692e-06
+        DEBUG:root:i=8 residual=8.018984658519912e-07
+        INFO:root:rank=0 pagerank=1.4128e+00 url=4
+        INFO:root:rank=1 pagerank=1.2504e+00 url=6
+        INFO:root:rank=2 pagerank=1.1754e+00 url=5
+        INFO:root:rank=3 pagerank=1.1085e+00 url=2
+        INFO:root:rank=4 pagerank=1.0082e+00 url=3
+        INFO:root:rank=5 pagerank=9.6462e-01 url=1
+
+        $ python3 pagerank.py --data=data/lawfareblog.csv.gz --search_query='trump'
+        INFO:root:rank=0 pagerank=8.5214e-01 url=www.lawfareblog.com/lawfare-podcast-united-nations-and-coronavirus-crisis
+        INFO:root:rank=1 pagerank=8.4812e-01 url=www.lawfareblog.com/house-oversight-committee-holds-day-two-hearing-government-coronavirus-response
+        INFO:root:rank=2 pagerank=8.4255e-01 url=www.lawfareblog.com/britains-coronavirus-response
+        INFO:root:rank=3 pagerank=8.4212e-01 url=www.lawfareblog.com/prosecuting-purposeful-coronavirus-exposure-terrorism
+        INFO:root:rank=4 pagerank=8.4158e-01 url=www.lawfareblog.com/israeli-emergency-regulations-location-tracking-coronavirus-carriers
+        INFO:root:rank=5 pagerank=8.4137e-01 url=www.lawfareblog.com/why-congress-conducting-business-usual-face-coronavirus
+        INFO:root:rank=6 pagerank=8.4083e-01 url=www.lawfareblog.com/congressional-homeland-security-committees-seek-ways-support-state-federal-responses-coronavirus
+        INFO:root:rank=7 pagerank=8.4032e-01 url=www.lawfareblog.com/paper-hearing-experts-debate-digital-contact-tracing-and-coronavirus-privacy-concerns
+        INFO:root:rank=8 pagerank=8.3962e-01 url=www.lawfareblog.com/house-subcommittee-voices-concerns-over-us-management-coronavirus
+        INFO:root:rank=9 pagerank=8.3946e-01 url=www.lawfareblog.com/lawfare-podcast-bonus-edition-steve-vladeck-emergency-powers-and-coronavirus
+
+        $ python3 pagerank.py --data=data/lawfareblog.csv.gz --search_query='iran'
+        INFO:root:rank=0 pagerank=9.5653e-01 url=www.lawfareblog.com/how-us-iran-tensions-could-disrupt-iraqs-fragile-peace
+        INFO:root:rank=1 pagerank=9.5150e-01 url=www.lawfareblog.com/praise-presidents-iran-tweets
+        INFO:root:rank=2 pagerank=9.0228e-01 url=www.lawfareblog.com/cyber-command-operational-update-clarifying-june-2019-iran-operation
+        INFO:root:rank=3 pagerank=8.7155e-01 url=www.lawfareblog.com/aborted-iran-strike-fine-line-between-necessity-and-revenge
+        INFO:root:rank=4 pagerank=8.6956e-01 url=www.lawfareblog.com/parsing-state-departments-letter-use-force-against-iran
+        INFO:root:rank=5 pagerank=8.6896e-01 url=www.lawfareblog.com/announcing-united-states-and-use-force-against-iran-new-lawfare-e-book
+        INFO:root:rank=6 pagerank=8.6874e-01 url=www.lawfareblog.com/iranian-hostage-crisis-and-its-effect-american-politics
+        INFO:root:rank=7 pagerank=8.6602e-01 url=www.lawfareblog.com/us-names-iranian-revolutionary-guard-terrorist-organization-and-sanctions-international-criminal
+        INFO:root:rank=8 pagerank=8.5758e-01 url=www.lawfareblog.com/iran-shoots-down-us-drone-domestic-and-international-legal-implications
+        INFO:root:rank=9 pagerank=8.5686e-01 url=www.lawfareblog.com/israel-iran-syria-clash-and-law-use-force
+
+        Task 1 part 3:
+
+        $ python3 pagerank.py --data=data/lawfareblog.csv.gz
+        INFO:root:rank=0 pagerank=6.6570e+00 url=www.lawfareblog.com/support-lawfare
+        INFO:root:rank=1 pagerank=6.6570e+00 url=www.lawfareblog.com/lawfare-job-board
+        INFO:root:rank=2 pagerank=6.6570e+00 url=www.lawfareblog.com/documents-related-mueller-investigation
+        INFO:root:rank=3 pagerank=6.6570e+00 url=www.lawfareblog.com/litigation-documents-resources-related-travel-ban
+        INFO:root:rank=4 pagerank=6.6570e+00 url=www.lawfareblog.com/subscribe-lawfare
+        INFO:root:rank=5 pagerank=6.6570e+00 url=www.lawfareblog.com/topics
+        INFO:root:rank=6 pagerank=6.6570e+00 url=www.lawfareblog.com/about-lawfare-brief-history-term-and-site
+        INFO:root:rank=7 pagerank=6.6570e+00 url=www.lawfareblog.com/our-comments-policy
+        INFO:root:rank=8 pagerank=6.6570e+00 url=www.lawfareblog.com/upcoming-events
+        INFO:root:rank=9 pagerank=6.6570e+00 url=www.lawfareblog.com/masthead
+
+        $ python3 pagerank.py --data=data/lawfareblog.csv.gz --filter_ratio=0.2
+        INFO:root:rank=0 pagerank=2.3606e+00 url=www.lawfareblog.com/todays-headlines-and-commentary-1964
+        INFO:root:rank=1 pagerank=2.3606e+00 url=www.lawfareblog.com/todays-headlines-and-commentary-1963
+        INFO:root:rank=2 pagerank=2.3424e+00 url=www.lawfareblog.com/todays-headlines-and-commentary-1962
+        INFO:root:rank=3 pagerank=1.8165e+00 url=www.lawfareblog.com/todays-headlines-and-commentary-1965
+        INFO:root:rank=4 pagerank=1.6956e+00 url=www.lawfareblog.com/todays-headlines-and-commentary-1966
+        INFO:root:rank=5 pagerank=1.6726e+00 url=www.lawfareblog.com/cyberlaw-podcast-sandworm-and-grus-global-intifada
+        INFO:root:rank=6 pagerank=1.6725e+00 url=www.lawfareblog.com/cyberlaw-podcast-plumbing-depths-artificial-stupidity
+        INFO:root:rank=7 pagerank=1.6058e+00 url=www.lawfareblog.com/lawfare-podcast-week-was-impeachment
+        INFO:root:rank=8 pagerank=1.6055e+00 url=www.lawfareblog.com/lawfare-podcast-ben-nimmo-whack-mole-game-disinformation
+        INFO:root:rank=9 pagerank=1.5562e+00 url=www.lawfareblog.com/cyberlaw-podcast-mistrusting-google
+
+        Task 1 part 4:
+        $ python3 pagerank.py --data=data/lawfareblog.csv.gz --verbose 
+        DEBUG:root:i=0 residual=112.26911926269531
+        DEBUG:root:i=1 residual=2.0098538398742676
+        DEBUG:root:i=2 residual=0.013323772698640823
+        ......................
+        INFO:root:rank=0 pagerank=6.6570e+00 url=www.lawfareblog.com/support-lawfare
+        INFO:root:rank=1 pagerank=6.6570e+00 url=www.lawfareblog.com/lawfare-job-board
+        INFO:root:rank=2 pagerank=6.6570e+00 url=www.lawfareblog.com/documents-related-mueller-investigation
+        INFO:root:rank=3 pagerank=6.6570e+00 url=www.lawfareblog.com/litigation-documents-resources-related-travel-ban
+        INFO:root:rank=4 pagerank=6.6570e+00 url=www.lawfareblog.com/subscribe-lawfare
+        INFO:root:rank=5 pagerank=6.6570e+00 url=www.lawfareblog.com/topics
+        INFO:root:rank=6 pagerank=6.6570e+00 url=www.lawfareblog.com/about-lawfare-brief-history-term-and-site
+        INFO:root:rank=7 pagerank=6.6570e+00 url=www.lawfareblog.com/our-comments-policy
+        INFO:root:rank=8 pagerank=6.6570e+00 url=www.lawfareblog.com/upcoming-events
+        INFO:root:rank=9 pagerank=6.6570e+00 url=www.lawfareblog.com/masthead
+
+        $ python3 pagerank.py --data=data/lawfareblog.csv.gz --verbose --alpha=0.99999
+        DEBUG:root:i=0 residual=132.08096313476562
+        DEBUG:root:i=1 residual=2.1988978385925293
+        DEBUG:root:i=2 residual=0.011466511525213718
+        DEBUG:root:i=3 residual=0.0013562189415097237
+        DEBUG:root:i=4 residual=0.00026922026881948113
+        DEBUG:root:i=5 residual=0.00016600433446001261
+        DEBUG:root:i=6 residual=0.0001224406878463924
+        DEBUG:root:i=7 residual=0.00010673818906070665
+        DEBUG:root:i=8 residual=4.5584423787659034e-05
+        DEBUG:root:i=9 residual=1.641477683733683e-05
+        DEBUG:root:i=10 residual=6.447228315664688e-07
+        INFO:root:rank=0 pagerank=7.8317e+00 url=www.lawfareblog.com/litigation-documents-related-appointment-matthew-whitaker-acting-attorney-general
+        INFO:root:rank=1 pagerank=7.8317e+00 url=www.lawfareblog.com/lawfare-job-board
+        INFO:root:rank=2 pagerank=7.8317e+00 url=www.lawfareblog.com/documents-related-mueller-investigation
+        INFO:root:rank=3 pagerank=7.8317e+00 url=www.lawfareblog.com/litigation-documents-resources-related-travel-ban
+        INFO:root:rank=4 pagerank=7.8317e+00 url=www.lawfareblog.com/subscribe-lawfare
+        INFO:root:rank=5 pagerank=7.8317e+00 url=www.lawfareblog.com/masthead
+        INFO:root:rank=6 pagerank=7.8317e+00 url=www.lawfareblog.com/topics
+        INFO:root:rank=7 pagerank=7.8317e+00 url=www.lawfareblog.com/our-comments-policy
+        INFO:root:rank=8 pagerank=7.8317e+00 url=www.lawfareblog.com/upcoming-events
+        INFO:root:rank=9 pagerank=7.8317e+00 url=www.lawfareblog.com/about-lawfare-brief-history-term-and-site
+
+        $ python3 pagerank.py --data=data/lawfareblog.csv.gz --verbose --filter_ratio=0.2
+        DEBUG:root:i=0 residual=110.49617004394531
+        DEBUG:root:i=1 residual=0.2719601094722748
+        DEBUG:root:i=2 residual=0.0013971751322969794
+        DEBUG:root:i=3 residual=0.0002733475703280419
+        DEBUG:root:i=4 residual=1.6421161490143277e-05
+        DEBUG:root:i=5 residual=4.329447619966231e-06
+        DEBUG:root:i=6 residual=3.769728778024728e-07
+        INFO:root:rank=0 pagerank=2.3606e+00 url=www.lawfareblog.com/todays-headlines-and-commentary-1964
+        INFO:root:rank=1 pagerank=2.3606e+00 url=www.lawfareblog.com/todays-headlines-and-commentary-1963
+        INFO:root:rank=2 pagerank=2.3424e+00 url=www.lawfareblog.com/todays-headlines-and-commentary-1962
+        INFO:root:rank=3 pagerank=1.8165e+00 url=www.lawfareblog.com/todays-headlines-and-commentary-1965
+        INFO:root:rank=4 pagerank=1.6956e+00 url=www.lawfareblog.com/todays-headlines-and-commentary-1966
+        INFO:root:rank=5 pagerank=1.6726e+00 url=www.lawfareblog.com/cyberlaw-podcast-sandworm-and-grus-global-intifada
+        INFO:root:rank=6 pagerank=1.6725e+00 url=www.lawfareblog.com/cyberlaw-podcast-plumbing-depths-artificial-stupidity
+        INFO:root:rank=7 pagerank=1.6058e+00 url=www.lawfareblog.com/lawfare-podcast-week-was-impeachment
+        INFO:root:rank=8 pagerank=1.6055e+00 url=www.lawfareblog.com/lawfare-podcast-ben-nimmo-whack-mole-game-disinformation
+        INFO:root:rank=9 pagerank=1.5562e+00 url=www.lawfareblog.com/cyberlaw-podcast-mistrusting-google
+
+        $ python3 pagerank.py --data=data/lawfareblog.csv.gz --verbose --filter_ratio=0.2 --alpha=0.99999
+        DEBUG:root:i=0 residual=129.9938507080078
+        DEBUG:root:i=1 residual=0.14371973276138306
+        DEBUG:root:i=2 residual=0.0052136583253741264
+        DEBUG:root:i=3 residual=0.0011795792961493134
+        DEBUG:root:i=4 residual=0.000605629466008395
+        DEBUG:root:i=5 residual=4.3303090933477506e-05
+        DEBUG:root:i=6 residual=1.981350123969605e-06
+        DEBUG:root:i=7 residual=2.384185791015625e-07
+        INFO:root:rank=0 pagerank=2.7771e+00 url=www.lawfareblog.com/todays-headlines-and-commentary-1964
+        INFO:root:rank=1 pagerank=2.7771e+00 url=www.lawfareblog.com/todays-headlines-and-commentary-1963
+        INFO:root:rank=2 pagerank=2.7557e+00 url=www.lawfareblog.com/todays-headlines-and-commentary-1962
+        INFO:root:rank=3 pagerank=2.1370e+00 url=www.lawfareblog.com/todays-headlines-and-commentary-1965
+        INFO:root:rank=4 pagerank=1.9948e+00 url=www.lawfareblog.com/todays-headlines-and-commentary-1966
+        INFO:root:rank=5 pagerank=1.9677e+00 url=www.lawfareblog.com/cyberlaw-podcast-sandworm-and-grus-global-intifada
+        INFO:root:rank=6 pagerank=1.9675e+00 url=www.lawfareblog.com/cyberlaw-podcast-plumbing-depths-artificial-stupidity
+        INFO:root:rank=7 pagerank=1.8891e+00 url=www.lawfareblog.com/lawfare-podcast-week-was-impeachment
+        INFO:root:rank=8 pagerank=1.8888e+00 url=www.lawfareblog.com/lawfare-podcast-ben-nimmo-whack-mole-game-disinformation
+        INFO:root:rank=9 pagerank=1.8308e+00 url=www.lawfareblog.com/cyberlaw-podcast-mistrusting-google
         '''
         with torch.no_grad():
             n = self.P.shape[0]
@@ -139,9 +336,11 @@ class WebGraph():
             x = xprev.detach().clone()
             for i in range(max_iterations):
                 xprev = x.detach().clone()
+                a = torch.ones([n,1])
+                p1 = (alpha * (x.t() @ a) + (1 - alpha)) * v.t()
 
                 # compute the new x vector using Eq (5.1)
-                # FIXME: Task 1
+                x = self.P.t().matmul(x).mul_(alpha).add_(p1.t()).div_(torch.norm(x))
                 # HINT: this can be done with a single call to the `torch.sparse.addmm` function,
                 # but you'll have to read the code above to figure out what variables should get passed to that function
                 # and what pre/post processing needs to be done to them
@@ -222,6 +421,7 @@ def url_satisfies_query(url, query):
     return satisfies
 
 
+
 if __name__=='__main__':
     import argparse
     parser = argparse.ArgumentParser()
@@ -245,3 +445,5 @@ if __name__=='__main__':
     v = g.make_personalization_vector(args.personalization_vector_query)
     pi = g.power_method(v, alpha=args.alpha, max_iterations=args.max_iterations, epsilon=args.epsilon)
     g.search(pi, query=args.search_query, max_results=args.max_results)
+
+

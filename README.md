@@ -1,25 +1,7 @@
 # Pagerank Project
 
-In this project, you will create a simple search engine for the website <https://www.lawfareblog.com>.
-This website provides legal analysis on US national security issues.
-You will use pagerank to return only the most important results from this website in your search engine.
-
-**Due date:** Sunday, ~~22~~ 29 September at midnight
-
-**Late Policy:** You lose $2^{(i-1)}$ points, where i is the number of days late.
-
-<!--
-**Computation:**
-This project has low computational requirements.
-You should be able to complete it on your own laptops.
--->
-
-**Collaboration Policy:**
-Do whatever will help you learn,
-but be an adult.
-You may talk to other students and use Google/ChatGPT.
-Recall that you will have an in-person oral exam on this material and the exam is worth many more points.
-The main purpose of this project is to help prepare you for the exam.
+Creating a simple search engine for the website <https://www.lawfareblog.com>, using pagerank to return only the most important results from this website in the search engine.
+This website provides legal analysis on US national security issues. Cool!
 
 ## Background
 
@@ -65,17 +47,6 @@ source,target
 > 5,4
 > 6,4
 > ```
->
-> There are many terminal commands throughout these instructions.
-> If you haven't used the terminal before, and so these commands are unfamiliar, that's okay.
-> I'd be happy to explain them in office hours,
-> or there are many tutors in the QCL available who can help.
-> (There are no tutors for this class specifically, but anyone who has taken CSCI046 or CSCI133 with me will be able to help with the terminal.)
->
-> Furthermore, you don't "need" to understand the terminal commands in detail,
-> since you are not required to run these commands or to create your own.
-> The important part is to understand the English language description of what the commands are doing,
-> and to understand that this is just how I computed what the English language text is describing.
 
 As you can see, the graph is stored as a CSV file.
 The first line is a header,
@@ -200,23 +171,11 @@ In particular, the ranking of the nodes/urls should be the same order.
 > The `--verbose` flag causes all of the lines beginning with `DEBUG` to be printed.
 > By default, only lines beginning with `INFO` are printed.
 
-> **NOTE:**
-> There are no automated test cases to pass for this assignment.
-> Test cases for algorithms involving floating point computations are hard to write and understand.
-> Minor-seeming implementations details can have large impacts on the final result.
-> These software engineering issues are beyond the scope of this class.
->
-> Instructions for how I will grade your homework are contained in the [submission section](#submission) at the end of this document.
-
 **Part 2:**
 
 The `pagerank.py` file has an option `--search_query`, which takes a string as a parameter.
 If this argument is used, then the program returns all nodes that match the query string sorted according to their pagerank.
 Essentially, this gives us the most important pages related to our query.
-
-Again, you may not get the exact same results as me,
-but you should get similar results to the examples I've shown below.
-Verify that you do in fact get similar results.
 
 ```
 $ python3 pagerank.py --data=data/lawfareblog.csv.gz --search_query='corona'
@@ -321,7 +280,7 @@ and all current solutions rely on careful human tuning and still have lots of fa
 
 **Part 4:**
 
-Recall from the reading that the runtime of pagerank depends heavily on the eigengap of the $\bar{\bar P}$ matrix,
+The runtime of pagerank depends heavily on the eigengap of the $\bar{\bar P}$ matrix,
 and that this eigengap is bounded by the alpha parameter.
 
 Run the following four commands:
@@ -464,23 +423,7 @@ Both of these articles are highly relevant to coronavirus discussions,
 but a simple keyword search for corona or related terms would not find these articles.
 The vast majority of industry data mining work is finding clever uses of standard algorithms.
 
-<!--
-**Part 3:**
 
-Select another topic related to national security.
-You should experiment with a national security topic other than the coronavirus.
-For example, find out what articles are important to the `iran` topic but do not contain the word `iran`.
-Your goal should be to discover what topics that www.lawfareblog.com considers to be related to the national security topic you choose.
--->
-
-## Submission
-
-1. Create a new repo on github (not a fork of this repo).
-    Ensure that all of the project files are copied from this folder into your new repo.
-
-1. As you complete the tasks above:
-    Run the corresponding commands below, and paste their output into the code blocks.
-    Please ensure correct markdown formatting.
    
    Task 1, part 1:
    ```
@@ -520,33 +463,3 @@ Your goal should be to discover what topics that www.lawfareblog.com considers t
    ```
    $ python3 pagerank.py --data=data/lawfareblog.csv.gz --filter_ratio=0.2 --personalization_vector_query='corona' --search_query='-corona'
    ```
-
-1. Ensure that all your changes to the `pagerank.py` and `README.md` files are committed to your repo and pushed to github.
-
-1. Get at least 5 stars on your repo.
-   (You may trade stars with other students in the class.)
-
-   > **NOTE:**
-   > 
-   > Recruiters use github profiles to determine who to hire,
-   > and pagerank is used to rank user profiles and projects.
-   > Links in this graph correspond to who has starred/followed who's repo.
-   > By getting more stars on your repo, you'll be increasing your github pagerank, which increases the likelihood that recruiters will hire you.
-   > To see an example, [perform a search for `data mining`](https://github.com/search?q=data+mining).
-   > Notice that the results are returned "approximately" ranked by the number of stars,
-   > but because "some stars count more than others" the results are not exactly ranked by the number of stars.
-   > (I asked you not to fork this repo because forks are ranked lower than non-forks.)
-   >
-   > In some sense, we are doing a "dual problem" to data mining by getting these stars.
-   > Recruiters are using data mining to find out who the best people to recruit are,
-   > and we are hacking their data mining algorithms by making those algorithms select you instead of someone else.
-   >
-   > If you're interested in exploring this idea further, here's a python tutorial for extracting GitHub's social graph: <https://www.oreilly.com/library/view/mining-the-social/9781449368180/ch07.html> ; if you're interested in learning more about how recruiters use github profiles, read this Hacker News post: <https://news.ycombinator.com/item?id=19413348>.
-
-1. Submit the url of your repo to sakai.
-
-   The assignment is worth 8 points.
-   1. There are 6 parts to the output above.  (4 in Task1 and 2 in Task2.)
-   1. Each part that you get incorrect will result in -2 points.  (But you cannot go negative.)
-   1. Another way of phrasing this is that the first 2 parts you complete are not worth any points,
-      but each part after that is worth 2 points.

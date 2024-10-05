@@ -108,27 +108,15 @@ $ python3 pagerank.py --data=data/lawfareblog.csv.gz --verbose --search_query=co
 > It will take about 10 seconds to load and parse the data files.
 > All the other computation happens essentially instantly.
 
-Currently, the pagerank of the nodes is not currently being calculated correctly, and so the webpages are returned in an arbitrary order.
-Your task in this assignment will be to fix these calculations in order to have the most important results (i.e. highest pagerank results) returned first.
-
 ## Task 1: the power method
 
 Implement the `WebGraph.power_method` function in `pagerank.py` for computing the pagerank vector by fixing the [`FIXME: Task 1` annotation](https://github.com/mikeizbicki/cmc-csci145-math166/blob/81ed5d2b75f5bc23b8de93805c29321ab431ed9b/topic01_computation_pagerank/project/pagerank.py#L144).
 
-> **NOTE:**
-> The power method is the only data mining algorithm you will implement in class.
-> You are implementing it because there are no standard library implementations available.
-> Why?
-> 1. The runtime is heavily dependent on the data structures used to store the graph data.
->    Different applications will need to use different data structures.
-> 1. It is "trivial" to implement.
->    My solution to this homework is <10 lines of code.
 
 **Part 1:**
 
-To check that your implementation is working,
-you should run the program on the `data/small.csv.gz` graph.
-For my implementation, I get the following output.
+To check that the implementation is working,
+I can run the program on the `data/small.csv.gz` graph.
 ```
 $ python3 pagerank.py --data=data/small.csv.gz --verbose
 DEBUG:root:computing indices
@@ -164,8 +152,6 @@ INFO:root:rank=3 pagerank=2.3175e-01 url=2
 INFO:root:rank=4 pagerank=1.8590e-01 url=3
 INFO:root:rank=5 pagerank=1.6917e-01 url=1
 ```
-Yours likely won't be identical (due to minor implementation details and weird floating point issues), but it should be similar.
-In particular, the ranking of the nodes/urls should be the same order.
 
 > **NOTE:**
 > The `--verbose` flag causes all of the lines beginning with `DEBUG` to be printed.
@@ -290,8 +276,7 @@ $ python3 pagerank.py --data=data/lawfareblog.csv.gz --verbose --alpha=0.99999
 $ python3 pagerank.py --data=data/lawfareblog.csv.gz --verbose --filter_ratio=0.2
 $ python3 pagerank.py --data=data/lawfareblog.csv.gz --verbose --filter_ratio=0.2 --alpha=0.99999
 ```
-You should notice that the last command takes considerably more iterations to compute the pagerank vector.
-(My code takes 685 iterations for this call, and about 10 iterations for all the others.)
+The last command takes considerably more iterations to compute the pagerank vector.
 
 This raises the question: Why does the second command (with the `--alpha` option but without the `--filter_ratio`) option not take a long time to run?
 The answer is that the $P$ graph for <https://www.lawfareblog.com> naturally has a large eigengap and so is fast to compute for all alpha values,
